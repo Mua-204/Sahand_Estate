@@ -5,7 +5,7 @@ const About = () => {
     <div>
           About Page
           
-          <Link to="/signin">Sign In</Link>
+          <Link to="/sign-in">Sign In</Link>
     </div>
   )
 }

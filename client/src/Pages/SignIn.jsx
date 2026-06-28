@@ -5,7 +5,7 @@ const SignIn = () => {
   return (
     <div>
       Sign In Page
-      <Link to="/signup">Sign Up</Link>
+      <Link to="/sign-up">Sign Up</Link>
     </div>
   )
 }
