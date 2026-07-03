@@ -1,7 +1,7 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 
-export const signup = async (req, res) => {
+export const signup = async (req, res,next) => {
   //saving the request body from Insomnia to the database
 
     const { username, email, password } = req.body; //using destructuring to extract values from req.body objects
@@ -12,7 +12,8 @@ export const signup = async (req, res) => {
     await newUser.save();
     //   res.send("Signup route reached!");
     res.status(201).json("User created successfully");
-  } catch (error) {
-    res.status(500).json(error.message);
+  } catch (error) {// res.status(500).json(error.message);
+    
+    next(error)//send the error to the error middleware in index.js
  }
 };

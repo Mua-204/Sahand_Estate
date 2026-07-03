@@ -23,3 +23,18 @@ app.use(express.json());
 
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
+
+
+//creating a MIDDLEWARE to handle errors
+app.use((err, req, res, next) => {
+  //the next argument is used to pass the error to the next middleware
+
+  const statusCode = err.statusCode || 500;//statusCode is used to set the status code of the response.
+  const message = err.message || 'internal server error';
+  
+  res.status(statusCode).json({
+    success: false,
+    statusCode,
+     message
+  });
+})
