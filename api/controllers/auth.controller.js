@@ -31,7 +31,7 @@ export const signin = async (req, res, next) => {
     
     //to compare password input from client with the one for the validated  user in mongo db
     const validPassword = bcryptjs.compareSync(password, validUser.password)
-    if (!validPassword) return next(errorHandler(401, 'Wrong credential!!'))
+    if (!validPassword) return next(errorHandler(401, 'Invalid credential!!'))
   
     
     //to create cookies using jwt
@@ -41,7 +41,6 @@ export const signin = async (req, res, next) => {
 
     //created the cookie and sent it to the client with the user data
     res.cookie('access_token', token, { httpOnly: true }).status(200).json(rest);
-    
   } catch (error) {
     next(error);
   }

@@ -1,13 +1,107 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React,{useState} from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignIn = () => {
-  return (
-    <div>
-      Sign In Page
-      <Link to="/sign-up">Sign Up</Link>
-    </div>
-  )
-}
+  // usestate Hooks
+  const [formData, setFormData] = useState({});
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-export default SignIn
+  //useNavigate hook
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.id]: e.target.value,
+    }));
+  };
+  // the HANDLESUBMIT function
+  const handleSubmit = async (e) => {
+    e.preventDefault(); //to prevent refresh on submit
+
+    // for the SIGNUP loading effect
+    setLoading(true);
+
+    //to stringify the formData and send it to the backend
+    try {
+      const res = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+
+      if (data.success === false) {
+        setError(data.message);
+        setLoading(false);
+        return;
+      }
+
+      setError(null);
+      setLoading(false);
+      //using the useNavigate hook to navigate to the sign-in page after successful signup
+      navigate("/");
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <div className="sign-up p-3 max-w-lg mx-auto">
+        <h1 className="text-3xl text-center font-bold my-7 ">Sign In</h1>
+        <form
+          onSubmit={handleSubmit}
+          action=" "
+          className="flex flex-col gap-4"
+        >
+          {/* <input
+            type="text"
+            placeholder="username"
+            className="border p-3 rounded-lg"
+            id="username"
+            onChange={handleChange}
+          /> */}
+          <input
+            type="email"
+            placeholder="email"
+            className="border p-3 rounded-lg"
+            id="email"
+            onChange={handleChange}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            className="border p-3 rounded-lg"
+            id="password"
+            onChange={handleChange}
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="uppercase bg-slate-700 text-white p-3 rounded-lg hover:opacity-75 disabled:opacity-60"
+          >
+            {loading ? "Loading ..." : "Sign in"}
+          </button>
+        </form>
+
+        <div className="flex gap-2 mt-5">
+          <p className="">Don't have an account?</p>
+          <Link
+            to="/sign-up"
+            className="text-blue-700 hover:underline underline-offset-2 decoration-2"
+          >
+            Sign up
+          </Link>
+        </div>
+        {error && <p className="text-red-600 mt-5">{error}</p>}
+      </div>
+    </>
+  );
+};
+
+export default SignIn;
