@@ -1,27 +1,36 @@
-import React,{useState} from "react";
+import React,{use, useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice";
 
 const SignIn = () => {
   // usestate Hooks
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  
+  //using the useSelector hook to get the current user from the redux store
+  const {loading, error}= useSelector((state)=> state.user);
 
   //useNavigate hook
   const navigate = useNavigate();
 
+  //using the useDispatch hook to dispatch actions to the redux store
+  const dispatch = useDispatch();
+
+
+  // the HANDLECHANGE function
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.id]: e.target.value,
     }));
   };
+
   // the HANDLESUBMIT function
   const handleSubmit = async (e) => {
     e.preventDefault(); //to prevent refresh on submit
 
     // for the SIGNUP loading effect
-    setLoading(true);
+    dispatch(signInStart());
 
     //to stringify the formData and send it to the backend
     try {
@@ -35,20 +44,23 @@ const SignIn = () => {
       const data = await res.json();
 
       if (data.success === false) {
-        setError(data.message);
-        setLoading(false);
+       
+        //send message to the redux store ('userSlice.js) using the signInFailure action
+        dispatch(signInFailure(data.message));
         return;
       }
 
-      setError(null);
-      setLoading(false);
+      dispatch(signInSuccess(data));
       //using the useNavigate hook to navigate to the sign-in page after successful signup
       navigate("/");
     } catch (error) {
-      setError(error.message);
-      setLoading(false);
+     dispatch(signInFailure(error.message));
     }
+    
   };
+
+
+  
 
   return (
     <>
