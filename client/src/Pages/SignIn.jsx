@@ -23,6 +23,8 @@ const SignIn = () => {
       ...prev,
       [e.target.id]: e.target.value,
     }));
+    //A CHANGE I MADE BY MYSELF: I added this line to clear the error message when the user starts typing in the input fields
+    error && dispatch(signInFailure(null)); 
   };
 
   // the HANDLESUBMIT function
