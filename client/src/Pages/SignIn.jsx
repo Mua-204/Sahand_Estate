@@ -1,21 +1,25 @@
-import React,{use, useState} from "react";
+import React, { use, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "../redux/user/userSlice";
+import OAUTH from "../Components/OAUTH";
 
 const SignIn = () => {
   // usestate Hooks
   const [formData, setFormData] = useState({});
-  
+
   //using the useSelector hook to get the current user from the redux store
-  const {loading, error}= useSelector((state)=> state.user);
+  const { loading, error } = useSelector((state) => state.user);
 
   //useNavigate hook
   const navigate = useNavigate();
 
   //using the useDispatch hook to dispatch actions to the redux store
   const dispatch = useDispatch();
-
 
   // the HANDLECHANGE function
   const handleChange = (e) => {
@@ -24,7 +28,7 @@ const SignIn = () => {
       [e.target.id]: e.target.value,
     }));
     //A CHANGE I MADE BY MYSELF: I added this line to clear the error message when the user starts typing in the input fields
-    error && dispatch(signInFailure(null)); 
+    error && dispatch(signInFailure(null));
   };
 
   // the HANDLESUBMIT function
@@ -46,7 +50,6 @@ const SignIn = () => {
       const data = await res.json();
 
       if (data.success === false) {
-       
         //send message to the redux store ('userSlice.js) using the signInFailure action
         dispatch(signInFailure(data.message));
         return;
@@ -56,13 +59,9 @@ const SignIn = () => {
       //using the useNavigate hook to navigate to the sign-in page after successful signup
       navigate("/");
     } catch (error) {
-     dispatch(signInFailure(error.message));
+      dispatch(signInFailure(error.message));
     }
-    
   };
-
-
-  
 
   return (
     <>
@@ -101,6 +100,7 @@ const SignIn = () => {
           >
             {loading ? "Loading ..." : "Sign in"}
           </button>
+          <OAUTH />
         </form>
 
         <div className="flex gap-2 mt-5">
