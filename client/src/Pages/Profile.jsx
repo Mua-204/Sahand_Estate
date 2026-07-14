@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useRef } from "react";
+import {
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
+} from "../redux/user/userSlice";
 
 const Profile = () => {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser ,loading,error} = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  
+  //my UseState hooks
   const [fileUploadError, setFileUploadError] = useState(false);
   const [filePerc, setFilePerc] = useState(0);
   const [file, setFile] = useState(undefined); //to store my image file
   const [formData, setFormData] = useState({});
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+
+  //Cloudinary
   const CLOUD_NAME = "adamcpye"; //my CLOUD_NAME in cloudinary
   const UPLOAD_PRESET = "sahand_estate_profile_images"; //my UPLOAD_PRESET name in cloudinary
 
@@ -21,7 +32,6 @@ const Profile = () => {
   }, [file]);
 
   //TO Handle Upload function //Using CLOUDINARY
-
   const handleFileUpload = async (file) => {
     try {
       //use the default javascript FORMDATA method to store some omy inputs
@@ -50,7 +60,6 @@ const Profile = () => {
       //receiving the response from cloudinary
       const uploadedImage = await res.json();
 
-
       if (res.ok) {
         //save the image in my formData USESTATE i created initially
         setFormData((prev) => ({
@@ -62,20 +71,52 @@ const Profile = () => {
       } else if (!res.ok) {
         throw new Error(uploadedImage.error.message);
       }
-    
-
     } catch (error) {
       console.log(error);
       setFileUploadError(true);
     }
   };
 
+  //To handle change
+  const handleChange = (e) => {
+    setFormData((prev) => {
+      return { ...prev, [e.target.id]: e.target.value };
+    });
+  };
+
+  //To handle Update submition
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      dispatch(updateUserStart())
+
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+      const data= await res.json();
+
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message))
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true)
+
+    } catch (error) {
+      dispatch(updateUserFailure(error.message))
+    }
+  };
 
   return (
     <>
       <div className="p-3 max-w-lg mx-auto">
         <h1 className="text-3xl font-bold text-center mt-7 mb-5">Profile</h1>
-        <form className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className=" rounded-full h-25 m-auto  w-25 flex justify-center overflow-hidden mt-2">
             <input
               type="file"
@@ -94,7 +135,9 @@ const Profile = () => {
 
           <p className="text-sm self-center">
             {fileUploadError ? (
-              <span className="text-red-700">Error: Image Upload Unsuccessful</span>
+              <span className="text-red-700">
+                Error: Image Upload Unsuccessful
+              </span>
             ) : filePerc !== 0 && filePerc !== 100 ? (
               <span className="text-slate-700">{filePerc}</span>
             ) : filePerc === 100 ? (
@@ -107,25 +150,33 @@ const Profile = () => {
           </p>
           <input
             type="text"
+            onChange={handleChange}
             id="username"
+            defaultValue={currentUser.username}
             placeholder="username"
             className="border-none bg-slate-200 p-3 rounded-lg"
           />
 
           <input
-            type="text"
+            type="email"
+            onChange={handleChange}
             id="email"
+            defaultValue={currentUser.email}
             placeholder="email"
             className="border-none bg-slate-200 p-3 rounded-lg"
           />
           <input
-            type="text"
+            type="password"
+            onChange={handleChange}
             id="password"
             placeholder="password"
             className="border-none bg-slate-200 p-3 rounded-lg"
           />
-          <button className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80">
-            update
+          <button
+            type="submit" disabled={loading}
+            className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-80 disabled:opacity-80"
+          >
+            {loading?'Loading':'Update'}
           </button>
         </form>
 
@@ -144,6 +195,8 @@ const Profile = () => {
             Sign out
           </span>
         </div>
+      <p className="mt-5 text-red-700">{ error? error:""}</p>
+      <p className="mt-5 text-green-700 font-medium">{ updateSuccess?"User Updated Successful":""}</p>
       </div>
     </>
   );
