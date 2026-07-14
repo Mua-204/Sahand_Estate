@@ -29,11 +29,7 @@ const OAUTH = () => {
           const data = await res.json();
           dispatch(signInSuccess(data));
 
-          navigate('/')
-
-
-           
-
+          navigate('/')           
         } catch (error) { 
           console.log('Could not connect to google',error)
         
