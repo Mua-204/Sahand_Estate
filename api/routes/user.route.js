@@ -1,5 +1,5 @@
 import express from "express";
-import { test,UpdateUser } from "../controllers/user.controller.js";
+import { test,UpdateUser,DeleteUser } from "../controllers/user.controller.js";
 import { verifyToken } from "../utils/verifyUser.js";
 
 const router = express.Router();
@@ -7,4 +7,8 @@ const router = express.Router();
 router.get('/test', test);
 //for the UPDATE API :came here after creating my cloudinary image url
 router.post('/update/:id', verifyToken,UpdateUser);//THE :id there is to access a particular user
+
+//DELETE API
+router.delete("/delete/:id", verifyToken,DeleteUser);
+
 export default router;

@@ -5,6 +5,9 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
 } from "../redux/user/userSlice";
 
 const Profile = () => {
@@ -112,6 +115,25 @@ const Profile = () => {
     }
   };
 
+  //TO HANDLE DELETE USER DATA FROM MONGO DB
+  const handleDeleteUser = async () => {
+    try {
+      dispatch(deleteUserStart())
+     const  res = await fetch(`/api/user/delete/${currentUser._id}`, {
+      method: 'DELETE'
+    });
+      const data = await res.json();
+      if (data.success===false) {
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+      dispatch(deleteUserSuccess(data))
+      
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message))
+    }
+  }
+
   return (
     <>
       <div className="p-3 max-w-lg mx-auto">
@@ -183,7 +205,7 @@ const Profile = () => {
         <div className="flex justify-between mt-5">
           <span
             className="cursor-pointer text-red-700 hover:underline underline-offset-2"
-            id="deleteAccount"
+            id="deleteAccount" onClick={handleDeleteUser}
           >
             Delete Account
           </span>
