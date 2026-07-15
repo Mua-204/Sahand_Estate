@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRef } from "react";
+import {Link} from 'react-router-dom'
 import {
   updateUserStart,
   updateUserSuccess,
@@ -225,7 +226,11 @@ const Profile = () => {
           >
             {loading?'Loading':'Update'}
           </button>
+
+          {/* The create lising link */}
+          <Link className="bg-green-700 p-3 rounded-lg uppercase text-white text-center hover:opacity-80" to={'/create-listing'}>Create Listing</Link>
         </form>
+
 
         <div className="flex justify-between mt-5">
           <span
