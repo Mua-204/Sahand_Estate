@@ -8,6 +8,9 @@ import {
   deleteUserStart,
   deleteUserSuccess,
   deleteUserFailure,
+  signoutUserStart,
+  signoutUserSuccess,
+  signoutUserFailure,
 } from "../redux/user/userSlice";
 
 const Profile = () => {
@@ -134,6 +137,28 @@ const Profile = () => {
     }
   }
 
+  //To handle SIGN-OUT
+  const handleSignOut = async () => {
+    try {
+      dispatch(signoutUserStart())
+      const res = await fetch('/api/auth/signout', {
+        method: 'GET',
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        dispatch(signoutUserFailure(data.message));
+        return;
+        
+      }
+      dispatch(signoutUserSuccess(data))
+      
+    } catch (error) {
+        dispatch(signoutUserFailure(data.message));
+      
+    }
+  };
+
   return (
     <>
       <div className="p-3 max-w-lg mx-auto">
@@ -212,7 +237,7 @@ const Profile = () => {
 
           <span
             className="cursor-pointer text-red-700 hover:underline underline-offset-2"
-            id="signOut"
+            id="signOut" onClick={handleSignOut}
           >
             Sign out
           </span>
