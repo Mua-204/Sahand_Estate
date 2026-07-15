@@ -18,7 +18,7 @@ export const verifyToken = (req, res, next) => {
             return next (errorHandler(403,'Invilid Token'))
         }
         req.user = decodedUser;//user data (THE id) from the cookie
-        next() // calls the UPDATE USER function from USER.ROUTE.JS FILE
+        next() // calls the next  function in the ..ROUTE.JS FILE were it is being used
     }
 
     jwt.verify(token, process.env.JWT_SECRET,handleVerifyToken);
