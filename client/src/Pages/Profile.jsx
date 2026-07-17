@@ -24,6 +24,9 @@ const Profile = () => {
   const [file, setFile] = useState(undefined); //to store my image file
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [showListingError, setShowListingError] = useState(false);
+  const [userListings, setUserListings] = useState([]);
+  
 
   //Cloudinary
   const CLOUD_NAME = "adamcpye"; //my CLOUD_NAME in cloudinary
@@ -159,6 +162,25 @@ const Profile = () => {
       
     }
   };
+  // to handle showing  a User's Listings
+  const handleShowListing = async () => {
+    console.log(currentUser)
+    setShowListingError(false)
+    try {
+      const res = await fetch(`/api/user/listings/${currentUser._id}`);
+      const data = await res.json();
+      console.log('data res',data);//REMOVE LATER
+
+      if (data.success===false) {
+        setShowListingError(data.message)
+        return;
+      }
+      setUserListings(data);
+      setShowListingError(false);
+    } catch (error) {
+      setShowListingError(true);
+    }
+  }
 
   return (
     <>
@@ -221,34 +243,94 @@ const Profile = () => {
             className="border-none bg-slate-200 p-3 rounded-lg"
           />
           <button
-            type="submit" disabled={loading}
+            type="submit"
+            disabled={loading}
             className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-80 disabled:opacity-80"
           >
-            {loading?'Loading':'Update'}
+            {loading ? "Loading" : "Update"}
           </button>
 
           {/* The create lising link */}
-          <Link className="bg-green-700 p-3 rounded-lg uppercase text-white text-center hover:opacity-80" to={'/create-listing'}>Create Listing</Link>
+          <Link
+            className="bg-green-700 p-3 rounded-lg uppercase text-white text-center hover:opacity-80"
+            to={"/create-listing"}
+          >
+            Create Listing
+          </Link>
         </form>
-
 
         <div className="flex justify-between mt-5">
           <span
             className="cursor-pointer text-red-700 hover:underline underline-offset-2"
-            id="deleteAccount" onClick={handleDeleteUser}
+            id="deleteAccount"
+            onClick={handleDeleteUser}
           >
             Delete Account
           </span>
 
           <span
             className="cursor-pointer text-red-700 hover:underline underline-offset-2"
-            id="signOut" onClick={handleSignOut}
+            id="signOut"
+            onClick={handleSignOut}
           >
             Sign out
           </span>
         </div>
-      <p className="mt-5 text-red-700">{ error? error:""}</p>
-      <p className="mt-5 text-green-700 font-medium">{ updateSuccess?"User Updated Successful":""}</p>
+        <p className="mt-5 text-red-700">{error ? error : ""}</p>
+        <p className="mt-5 text-green-700 font-medium">
+          {updateSuccess ? "User Updated Successful" : ""}
+        </p>
+
+        <button
+          onClick={handleShowListing}
+          className="text-green-700 w-full hover:underline underline-offset-2"
+        >
+          Show Listings
+        </button>
+
+        {/* showing users listings */}
+
+        <p className="text-red-700 mt-3 text-center">
+          {showListingError && "Error showing listings"}
+        </p>
+
+          {userListings && userListings.length > 0 && (
+            <div className=" flex flex-col gap-5 bg-slate-200 rounded-lg px-4 pb-4">
+              <h1 className="text-2xl text-center mt-7 font-bold underline underline-offset-2">
+                Your Listings
+              </h1>
+              {userListings.map((listItems) => {
+                return (
+                  <div
+                    key={listItems._id}
+                    className="border rounded-lg p-3 flex justify-between items-center gap-4"
+                  >
+                    <Link to={`/listing/${listItems._id}`}>
+                      <img
+                        src={listItems.imageUrls[0]}
+                        className="h-16 w-16 object-contain "
+                        alt="listing image cover"
+                      />
+                    </Link>
+                    <Link
+                      className="text-slate-700 flex-1 font-semibold hover:underline truncate underline-offset-2"
+                      to={`/listing/${listItems._id}`}
+                    >
+                      <p>{listItems.name}</p>
+                    </Link>
+                    <div className="flex flex-col items-center gap-2">
+                      <button className="uppercase text-red-700 hover:underline underline-offset-2">
+                        Delete
+                      </button>
+                      <button className="text-green-700 uppercase hover:underline underline-offset-2">
+                        edit
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
       </div>
     </>
   );
