@@ -160,7 +160,7 @@ const UpdateListing = () => {
         }
         
         //Navigate/move into the Listing Page
-    //   navigate(`/listing/${data._id}`);
+      navigate(`/listing/${data._id}`);
     } catch (error) {
       setError(error.message);
       setLoading(false);

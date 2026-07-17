@@ -165,12 +165,11 @@ const Profile = () => {
   };
   // to handle showing  a User's Listings
   const handleShowListing = async () => {
-    console.log(currentUser)
+    // console.log(currentUser)
     setShowListingError(false)
     try {
       const res = await fetch(`/api/user/listings/${currentUser._id}`);
       const data = await res.json();
-      console.log('data res',data);//REMOVE LATER
 
       if (data.success===false) {
         setShowListingError(data.message)

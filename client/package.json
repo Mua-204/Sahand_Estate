@@ -20,6 +20,7 @@
     "react-router": "^7.18.0",
     "react-router-dom": "^7.18.0",
     "redux-persist": "^6.0.0",
+    "swiper": "^14.0.5",
     "tailwindcss": "^4.3.1"
   },
   "devDependencies": {

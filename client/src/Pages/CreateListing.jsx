@@ -16,7 +16,6 @@ const Listing = () => {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploading, setuploading] = useState(false);
-  console.log(formData)
   
 
   //handleImageSubmit function
@@ -129,7 +128,7 @@ const Listing = () => {
       if (data.success === false) {
         setError(data.message)
       }
-      navigate(`/listing/${data._id}`)
+      navigate(`/listing/${data._id}`);
        
     } catch (error) {
       setError(error.message);
