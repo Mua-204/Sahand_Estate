@@ -302,7 +302,7 @@ const Profile = () => {
         </p>
 
         <button
-          onClick={handleShowListing}
+          onClick={userListings.length<=0?handleShowListing:()=>setUserListings([])}
           className="text-green-700 w-full hover:underline underline-offset-2"
         >
           Show Listings
@@ -316,7 +316,7 @@ const Profile = () => {
 
           {userListings && userListings.length > 0 && (
             <div className=" flex flex-col gap-5 bg-slate-200 rounded-lg px-4 pb-4">
-              <h1 className="text-2xl text-center mt-7 font-bold underline underline-offset-2">
+              <h1   className="text-2xl text-center mt-7 font-bold underline underline-offset-2">
                 Your Listings
               </h1>
               {userListings.map((listItems) => {
@@ -339,12 +339,17 @@ const Profile = () => {
                       <p>{listItems.name}</p>
                     </Link>
                     <div className="flex flex-col items-center gap-2">
-                      <button onClick={()=>handleListingDelete(listItems._id)} className="uppercase text-red-700 hover:underline underline-offset-2">
+                      <button
+                        onClick={() => handleListingDelete(listItems._id)}
+                        className="uppercase text-red-700 hover:underline underline-offset-2"
+                      >
                         Delete
                       </button>
-                      <button className="text-green-700 uppercase hover:underline underline-offset-2">
-                        edit
-                      </button>
+                      <Link to={`/update-listing/${listItems._id}`}>
+                        <button className="text-green-700 uppercase hover:underline underline-offset-2">
+                          edit
+                        </button>
+                      </Link>
                     </div>
                   </div>
                 );
