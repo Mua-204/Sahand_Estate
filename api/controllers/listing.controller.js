@@ -1,4 +1,5 @@
 import Listing from '../models/listingModel.js'
+import { errorHandler } from '../utils/error.js';
 
 export const CreateListing = async (req, res, next) => {
     try {
@@ -11,3 +12,24 @@ export const CreateListing = async (req, res, next) => {
         next(error)
     }
 };
+
+export const deleteListing = async (req, res, next) => {
+    //to check if listing exists
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) {
+        return next(errorHandler(404,'Listing not found'))
+    }
+    console.log(listing)
+
+
+    if (req.user.id !== listing.userRef) {
+        return next(errorHandler(401,'You can only delete your own listings!!'))
+    }
+    try {
+        await Listing.findByIdAndDelete(req.params.id);
+        res.status(200).json('Listing Deleted')
+
+    } catch (error) {
+        next(error)
+    }
+}
