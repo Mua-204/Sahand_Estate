@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import ContactLandlord from '../Components/ContactLandlord';
+import { useSelector } from 'react-redux';
 import {
   FaBath,
   FaBed,
@@ -23,12 +24,15 @@ const Listing = () => {
     const [listing, setListing] = useState(null);
     const [loading, setloading] = useState(true);
     const [error, setError] = useState(false);
-    const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [contactLandlord, setContactLandlord] = useState(false);
 
     //React Redux UseSelector
     const { currentUser } = useSelector((state) => state.user);
 
 
+  // console.log("Current User:", currentUser);
+  // console.log("lising:", listing);
     useEffect(() => {
         const fetchListing = async () => {
             try {
@@ -57,7 +61,7 @@ const Listing = () => {
       <main>
         {loading && <p className="text-center my-7 text-2xl">Loading...</p>}
         {error && (
-          <p className="text-center my-7 text-2xl text-red-00">
+          <p className="text-center my-7 text-2xl text-red-700">
             Something went wrong
           </p>
         )}
@@ -146,13 +150,41 @@ const Listing = () => {
                   {listing.furnished ? "Furnished" : "Unfurnished"}
                 </li>
               </ul>
+
+              {currentUser &&
+                currentUser._id !== listing.userRef &&
+                !contactLandlord && (
+                  <div className="mt-6 mx-7 space-y-4">
+                    {/* Contact Landlord */}
+                    <button
+                      onClick={() => setContactLandlord(true)}
+                      className="flex items-center justify-center w-full gap-2
+                 p-3 bg-slate-700 text-white font-semibold
+                 rounded-lg shadow-sm
+                 hover:bg-slate-800 transition duration-200"
+                    >
+                      Contact Landlord
+                    </button>
+
+                    {/* WhatsApp Contact */}
+                    <button
+                      onClick={() => setContactLandlord(true)}
+                      className="flex items-center justify-center w-full gap-3 p-3 bg-green-600 text-white font-semibold rounded-lg shadow-sm  hover:bg-green-700 transition duration-200"
+                    >
+                      <span className="flex items-center justify-center w-8 h-8 bg-white rounded-full p-1">
+                        <img
+                          src="https://res.cloudinary.com/adamcpye/image/upload/v1787282090/whatsapp-vector-logo-icon-logotype-vector-social-media_901408-406_ynesbd.jpg"
+                          alt="WhatsApp logo"
+                          className="w-full h-full object-contain rounded-full"
+                        />
+                      </span>
+
+                      <span>Landlord WhatsApp Contact</span>
+                    </button>
+                  </div>
+                )}
               
-              {currentUser&&currentUser._id !==listing.userRe&&
-              <button className='bg-slate-700 p-3 mt-4 mx-7 text-white uppercase text-center rounded-lg hover:opacity-85'>
-                Contact Ladlord
-              </button>
-              }
-              
+              {contactLandlord && <ContactLandlord listing={listing } />}
             </div>
           </>
         )}

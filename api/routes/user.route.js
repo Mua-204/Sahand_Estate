@@ -1,5 +1,5 @@
 import express from "express";
-import { test,UpdateUser,DeleteUser,getUserListings } from "../controllers/user.controller.js";
+import { test,UpdateUser,DeleteUser,getUserListings, getUser } from "../controllers/user.controller.js";
 import { verifyToken } from "../utils/verifyUser.js";
 
 const router = express.Router();
@@ -12,6 +12,9 @@ router.post('/update/:id', verifyToken,UpdateUser);//THE :id there is to access 
 router.delete("/delete/:id", verifyToken, DeleteUser);
 
 //getUserListing API
-router.get('/listings/:id',verifyToken,getUserListings)
+router.get('/listings/:id', verifyToken, getUserListings)
+
+//getUserListing API
+router.get('/:id',verifyToken,getUser)
 
 export default router;
