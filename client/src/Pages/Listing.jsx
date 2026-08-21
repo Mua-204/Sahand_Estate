@@ -24,6 +24,8 @@ const Listing = () => {
     const [loading, setloading] = useState(true);
     const [error, setError] = useState(false);
     const [copied, setCopied] = useState(false);
+
+    //React Redux UseSelector
     const { currentUser } = useSelector((state) => state.user);
 
 
@@ -144,6 +146,13 @@ const Listing = () => {
                   {listing.furnished ? "Furnished" : "Unfurnished"}
                 </li>
               </ul>
+              
+              {currentUser&&currentUser._id !==listing.userRe&&
+              <button className='bg-slate-700 p-3 mt-4 mx-7 text-white uppercase text-center rounded-lg hover:opacity-85'>
+                Contact Ladlord
+              </button>
+              }
+              
             </div>
           </>
         )}

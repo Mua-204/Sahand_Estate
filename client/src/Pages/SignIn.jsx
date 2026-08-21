@@ -35,7 +35,7 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault(); //to prevent refresh on submit
 
-    // for the SIGNUP loading effect
+    // for the SIGN_IN loading effect
     dispatch(signInStart());
 
     //to stringify the formData and send it to the backend

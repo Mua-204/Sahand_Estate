@@ -6,8 +6,9 @@ const Home = () => {
     <div>
       Home Page
       <Link to="/about">About</Link>
+      <Link to="/profile">Profile</Link>
     </div>
-  )
+  );
 }
 
 export default Home
